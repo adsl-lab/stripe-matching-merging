@@ -9,7 +9,7 @@ Our general stripe-merging transition framework consists of two parts:Adaptive E
 
 We implement an erasure coding tiny dfs of about 4000 sloc as testbed and further perform system evalution on it.The architecture follows master-worker style,like many state-of-art distributed file storage suchas HDFS,Ceph.Three major components are client,coordinator,datanode.An example of uploading file can be illustrated as:
 
-![image](prototype/M-S.png)
+![image](code/prototype/M-S.png)
 
 Currently,we do not care availabilty issue and just deploy single coordinator,we encourage anyone to perfect the system,for example,you can bring it more availability by adding more CNs and keep them in consistent state by consensus protocol like raft or existed coordinate service like Zookeeper.
 
