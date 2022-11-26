@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+     <property datanode_uri="" datanodeupload_port="22221" datanodedownload_port="22222" fs_uri="192.168.0.103:33333"
+     log_path="./log/logFile.txt" default_block_size="1" default.ecschema="6,2,2"/>
+</properties>

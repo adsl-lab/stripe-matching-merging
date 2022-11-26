@@ -1,0 +1,93 @@
+syntax ="proto3";
+
+package coordinator;
+
+//client side stub
+//coordinator size implement
+service FileSystem{
+  rpc createDir (Path)  returns(RequestResult);
+  rpc uploadStripe (StripeInfo) returns(StripeDetail);
+  rpc downloadStripe (StripeId) returns(StripeDetail);
+  rpc downloadStripeWithHint(StripeIdWithHint) returns(StripeLocation);
+  rpc deleteStripe(StripeId) returns(RequestResult);
+  rpc uploadCheck(StripeInfo) returns(RequestResult);
+  rpc reportblockupload(StripeId)returns(RequestResult);
+  rpc listStripe(StripeId) returns(StripeLocation);
+  rpc listAllStripes(ListAllStripeCMD) returns(stream StripeLocation);
+  rpc transitionup(TransitionUpCMD) returns (RequestResult);
+  rpc setplacementpolicy(SetPlacementPolicyCMD) returns(RequestResult);
+}
+
+
+
+//From DataNode to Coodinator{typically for report a block from a stripe transfer from client result}
+service FromDataNode{
+
+}
+
+message StripeIdWithHint{
+  StripeId stripeid =1;
+  NodesLocation badlocations =2 ;
+}
+
+message NodesLocation{
+  repeated string NodesUri = 1;
+}
+message StripeId{
+  int32 stripeid = 1;
+}
+message StripeInfo{
+  int32 stripeid = 1;
+  int32 stripe_k = 2;
+  int32 stripe_l = 3;
+  int32 stripe_g = 4;
+  int32 blksize =  5;
+}
+
+message StripeLocation{
+  repeated string dataLoc = 1;
+  repeated string localparityLoc = 2;
+  repeated string globalparityLoc = 3;
+}
+
+message StripeDetail{
+  StripeLocation stripelocation = 1;
+  StripeId stripeid = 2;
+}
+
+message SetPlacementPolicyCMD{
+  enum PLACE{
+    COMPACT = 0;
+    RANDOM = 1;
+    SPARSE = 2;
+  }
+  PLACE place = 1;
+}
+message Path{
+  string dstpath =1;
+}
+
+message RequestResult{
+  bool trueorfalse=1;
+}
+
+message ListAllStripeCMD{
+
+}
+
+message TransitionUpCMD{
+    enum MODE{
+      BASIC = 0;
+      BASIC_PART = 1;
+      DESIGNED = 2;
+    }
+    enum MATCH{
+      SEQ=0;
+      RANDOM=1;
+      PERFECT=2;
+    }
+    MODE mode = 1;
+    int32 step = 2;
+    bool doublegp = 3;
+    MATCH match=4;
+}

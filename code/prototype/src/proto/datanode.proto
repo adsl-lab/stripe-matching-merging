@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package datanode;
+
+//
+service FromDataNode{
+
+}
+
+//From Coodinator to DN
+service FromCoodinator{
+  //deal with dir creating too
+  rpc handleupload(UploadCMD) returns(RequestResult);
+  rpc handledownload(DownloadCMD) returns(RequestResult);
+  rpc clearallstripe(ClearallstripeCMD) returns(RequestResult);
+  rpc dodownload(DodownloadCMD) returns(RequestResult);
+  rpc dopartialcoding(NodesLocation) returns(RequestResult);
+  rpc doglobalcoding(NodesLocation) returns(RequestResult);
+  rpc docompleterepair(StripeLocation) returns(RequestResult);
+  rpc clearstripe(StripeId) returns(RequestResult);
+  rpc checkalive(CheckaliveCMD ) returns(RequestResult);
+  //with deletion , migration use only
+  rpc handlepull(HandlePullCMD) returns(RequestResult);
+  rpc handlepush(HandlePushCMD) returns(RequestResult);
+  //pull from handledownload nodes and perform some operations then push to some handleupload nodes
+  //worker node use only
+  rpc pull_perform_push(OP) returns(RequestResult);
+  rpc renameblock(RenameCMD) returns(RequestResult);
+}
+
+message RenameCMD{
+  int32 oldid = 1;
+  int32 newid = 2;
+}
+message CheckaliveCMD{
+
+}
+message StripeId{
+  int32 stripeid = 1;
+}
+message StripeLocation{
+  repeated string dataLoc = 1;
+  repeated string localparityLoc = 2;
+  repeated string globalparityLoc = 3;
+}
+
+message NodesLocation{
+  repeated string NodesUri = 1;
+  repeated int32 NodesStripeId = 2;
+  repeated int32 NodesBlkId = 3;
+  repeated bool IsPart = 4;
+  int32 TargetStripeId = 5;
+  int32 TargetBlks = 6;
+  bool AsPart =7;
+}
+
+message ClearallstripeCMD{
+
+}
+message DodownloadCMD{
+  string NodesUri = 1;
+  int32 NodesStripeId = 2;
+  int32 NodesBlkId = 3;
+  int32 TargetStripeId = 4;
+  int32 TargetBlks = 5;
+  bool IsPart = 6;
+  bool AsPart =7;
+}
+
+message Path{
+  string dstpath =1;
+}
+//From Client to DN {typically for single block transfer}
+service FromClient{
+}
+
+message OP{
+  repeated string from = 1;
+  repeated string to = 2;
+  enum CODEC{
+    NO = 0 ;
+    XOR = 1 ;
+    LRC = 2 ;
+    REUSE = 3;
+    PARTIAL = 4;
+  }
+  CODEC op = 3;
+  int32 stripeid = 4;
+  repeated int32 multiby = 5 ;
+}
+
+
+message StripeInfo{
+  int32 stripeid = 1;
+  int32 stripe_k = 2;
+  int32 stripe_l = 3;
+  int32 stripe_g = 4;
+
+}
+
+message UploadCMD{
+  bool AsPart = 1;
+}
+
+message DownloadCMD{
+  bool AsPart = 1;
+}
+
+message HandlePullCMD{
+  bool AsPart = 1;
+}
+
+message HandlePushCMD{
+  bool AsPart = 1;
+}
+message RequestResult{
+  bool trueorfalse=1;
+}
